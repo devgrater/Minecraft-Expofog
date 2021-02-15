@@ -17,14 +17,12 @@ uniform float near;
 uniform vec3 cameraPosition; 
 uniform mat4 gbufferModelViewInverse;
 uniform float viewWidth;
-uniform sampler2D noisetex;
 uniform float frameTimeCounter;
 
 varying vec4 viewDir;
 varying vec4 texcoord;
 varying vec4 color;
 
-const int noiseTextureResolution = 64;
 
 void main(){
     vec4 sampledTexture = texture2D(texture, texcoord.st);
@@ -62,7 +60,7 @@ void main(){
 
 
     float falloff = 0.01;
-    float height = eyePlayerPos.y + eyeAltitude;
+    //float height = eyePlayerPos.y + eyeAltitude;
     float heightFogAmount = 1.0;//clamp(exp(-((height - OVERWORLD_GROUND_HEIGHT - rndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0); //This determines whether the eyes is inside the fog plane
     float eyeHeightFogAmount = 1.0;//clamp(exp(-((eyeAltitude - OVERWORLD_GROUND_HEIGHT - feetRndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0);
     

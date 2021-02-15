@@ -18,15 +18,14 @@ uniform float near;
 uniform vec3 cameraPosition; 
 uniform mat4 gbufferModelViewInverse;
 uniform float viewWidth;
-uniform sampler2D noisetex;
 uniform float frameTimeCounter;
 uniform float rainStrength;
+uniform sampler2D colortex7;
+uniform sampler2D colortex6;
 
 varying vec4 viewDir;
 varying vec4 texcoord;
 varying vec4 color;
-
-const int noiseTextureResolution = 64;
 
 void main(){
     vec4 sampledTexture = texture2D(texture, texcoord.st);
@@ -57,14 +56,14 @@ void main(){
     vec3 feetPlayerPos = eyePlayerPos + gbufferModelViewInverse[3].xyz;
     vec3 worldPos = feetPlayerPos + cameraPosition;
 
-    float rndOffset = pow(texture2D(noisetex, (worldPos.xz + time) / NOISE_SAMPLE_SIZE).r, 0.5);
+    float rndOffset = pow(texture2D(colortex7, (worldPos.xz + time) / NOISE_SAMPLE_SIZE).r, 0.5);
     rndOffset = rndOffset * 2 - 1;
-    float feetRndOffset = pow(texture2D(noisetex, (cameraPosition.xz + time) / NOISE_SAMPLE_SIZE).r, 0.5);
+    float feetRndOffset = pow(texture2D(colortex7, (cameraPosition.xz + time) / NOISE_SAMPLE_SIZE).r, 0.5);
     feetRndOffset = feetRndOffset * 2 - 1;
 
 
     float falloff = 0.01;
-    float height = eyePlayerPos.y + eyeAltitude;
+    float height = worldPos.y;//eyePlayerPos.y + eyeAltitude;
     float heightFogAmount = clamp(exp(-((height - OVERWORLD_GROUND_HEIGHT - rndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0); //This determines whether the eyes is inside the fog plane
     float eyeHeightFogAmount = clamp(exp(-((eyeAltitude - OVERWORLD_GROUND_HEIGHT - feetRndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0);
     
@@ -76,6 +75,8 @@ void main(){
     fogLerpAmount *= fogLerpAmount;
     fogLerpAmount *= fogLerpAmount;
     vec4 fogColor = mix(vec4(0.1, 0.1, 0.2, 1.0), vec4(gl_Fog.color.rgb, 0.01), fogLerpAmount);
+
+    //float causticColor = texture2D(colortex6, (worldPos.xz + rndOffset * 4) / 4).r;
 
 
 
