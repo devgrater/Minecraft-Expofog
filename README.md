@@ -1,6 +1,8 @@
 # Minecraft-Expofog
 Exponential height fog shader for minecraft
+
 Survival friendly, but could be bad in performance because I'm lazy
+
 If you want to help improve the shader, feel free to do so.
 
 ![Expofog-1](https://alligrater.github.io/expofog-1.png)
