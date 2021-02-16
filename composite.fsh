@@ -22,6 +22,7 @@ uniform float frameTimeCounter;
 uniform float rainStrength;
 uniform sampler2D colortex7;
 uniform sampler2D colortex6;
+uniform vec3 skyColor;
 
 varying vec4 viewDir;
 varying vec4 texcoord;
@@ -29,7 +30,6 @@ varying vec4 color;
 
 void main(){
     vec4 sampledTexture = texture2D(texture, texcoord.st);
-    float pitch = -upPosition.z;
     float depth0 = texture2D(depthtex0, texcoord.st).r;
     float powedDepth0 = depth0;
 
@@ -64,8 +64,9 @@ void main(){
 
     float falloff = 0.01;
     float height = worldPos.y;//eyePlayerPos.y + eyeAltitude;
+    //exp(-((height - OVERWORLD_GROUND_HEIGHT - rndOffset * 8) * FALLOFF_FUN) * falloff
     float heightFogAmount = clamp(exp(-((height - OVERWORLD_GROUND_HEIGHT - rndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0); //This determines whether the eyes is inside the fog plane
-    float eyeHeightFogAmount = clamp(exp(-((eyeAltitude - OVERWORLD_GROUND_HEIGHT - feetRndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 1.0);
+    float eyeHeightFogAmount = clamp(exp(-((eyeAltitude - OVERWORLD_GROUND_HEIGHT - feetRndOffset * 8) * FALLOFF_FUN) * falloff), 0.0, 0.8);
     
     float fogAmount = clamp(heightFogAmount * powedDepth0, 0, 1);
     
@@ -74,7 +75,7 @@ void main(){
     float fogLerpAmount = clamp(pow(eyeAltitude / 60, 2), 0, 1);
     fogLerpAmount *= fogLerpAmount;
     fogLerpAmount *= fogLerpAmount;
-    vec4 fogColor = mix(vec4(0.1, 0.1, 0.2, 1.0), vec4(gl_Fog.color.rgb, 0.01), fogLerpAmount);
+    vec4 fogColor = mix(vec4(0.1, 0.1, 0.2, 1.0), vec4(mix(skyColor, gl_Fog.color.rgb, powedDepth0), 1.0), fogLerpAmount);
 
     //float causticColor = texture2D(colortex6, (worldPos.xz + rndOffset * 4) / 4).r;
 
